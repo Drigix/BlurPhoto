@@ -18,6 +18,8 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Threading;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Project_JA
 {
@@ -34,13 +36,13 @@ namespace Project_JA
         private static ManualResetEvent resetEvent = new ManualResetEvent(false);
 
         public Bitmap bitmap;
-        public Int32 blurSize = 10;
+        public Int32 blurSize = 3;
 
         private void runButton_Click(object sender, RoutedEventArgs e)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            bitmap = Blur2();
+            bitmap = Blur();
 
             watch.Stop();
 
@@ -72,180 +74,63 @@ namespace Project_JA
             Trace.WriteLine(message);
         }
 
-        private Bitmap Blur2()
+        private Bitmap Blur()
         {
             Bitmap image = bitmap;
-            Bitmap blurred = new Bitmap(image.Width, image.Height);
-            Int32 tempBlurSize = blurSize;
+            BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            // make an exact copy of the bitmap provided
-            using (Graphics graphics = Graphics.FromImage(blurred))
-                graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
-                    new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+            IntPtr ptr = data.Scan0;
 
-            int tempX = 0;
-            int tempY = 0;
+            int bytes = data.Stride * data.Height;
+            byte[] bitmapBytes = new byte[bytes];
 
+            Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
-            //    ManualResetEvent resetEvent = new ManualResetEvent(false);
-            //    var list = new List<int>();
-            //    for (int i = 0; i < 2; i++) list.Add(i);
-
-
-            //for (int i = 0; i < 1; i++)
-            //    {
-            //        for (int j = 0; j < 1; j++)
-            //        {
-            //            Rectangle rectangle = new Rectangle(tempX, tempY, image.Width, image.Height);
-            //            ThreadPool.SetMinThreads(1, 0);
-            //            ThreadPool.SetMaxThreads(1, 0);
-            //            Bitmap tempBlurred = (Bitmap)blurred.Clone();
-            //             Bitmap tempImage = (Bitmap)bitmap.Clone();
-            //            ThreadPool.QueueUserWorkItem(
-            //                new WaitCallback(delegate (object state)
-            //                {
-            //                    Thread thread = Thread.CurrentThread;
-            //                    string message = $"Background: {thread.IsBackground}, Thread Pool: {thread.IsThreadPoolThread}, Thread ID: {thread.ManagedThreadId}";
-            //                    Trace.WriteLine(message);
-            //                    for (int xx = rectangle.X; xx < rectangle.Width; xx++)
-            //                    {
-            //                        for (int yy = rectangle.Y; yy < rectangle.Height; yy++)
-            //                        {
-            //                            int avgR = 0, avgG = 0, avgB = 0;
-            //                            int blurPixelCount = 0;
-
-            //                        // average the color of the red, green and blue for each pixel in the
-            //                        // blur size while making sure you don't go outside the image bounds
-            //                        for (int x = xx; (x < xx + tempBlurSize && x < tempImage.Width); x++)
-            //                            {
-            //                                for (int y = yy; (y < yy + tempBlurSize && y < tempImage.Height); y++)
-            //                                {
-
-            //                                    System.Drawing.Color pixel = tempBlurred.GetPixel(x, y);
-            //                                //System.Drawing.Color pixel = blurred.GetPixel(Math.Abs(x), Math.Abs(y));
-
-            //                                    avgR += pixel.R;
-            //                                    avgG += pixel.G;
-            //                                    avgB += pixel.B;
-
-            //                                    blurPixelCount++;
-            //                                }
-            //                            }
-            //                            if (blurPixelCount > 0)
-            //                            {
-            //                                avgR = avgR / blurPixelCount;
-            //                                avgG = avgG / blurPixelCount;
-            //                                avgB = avgB / blurPixelCount;
-            //                            }
-
-
-            //                        // now that we know the average for the blur size, set each pixel to that color
-            //                        for (int x = xx; x < xx + tempBlurSize && x < tempImage.Width && x < rectangle.Width; x++)
-            //                                for (int y = yy; y < yy + tempBlurSize && y < tempImage.Height && y < rectangle.Height; y++)
-            //                                {
-            //                                    if (Math.Pow((x - tempImage.Width / 2), 2) + Math.Pow((y - tempImage.Height / 2), 2) > 6000)
-            //                                    {
-            //                                        tempBlurred.SetPixel(x, y, System.Drawing.Color.FromArgb(avgR, avgG, avgB));
-            //                                    }
-            //                                }
-            //                        }
-            //                    }
-            //                    resetEvent.Set();
-            //                }), list[i]);
-            //            tempY += image.Height / 2;
-            //        }
-            //        tempY = 0;
-            //        tempX += image.Width / 2;
-            //    }
-            //   resetEvent.WaitOne();
-            //blurred = tempBlurred;
-            //WaitHandle.WaitAll(events.ToArray());
-            Rectangle rectangle = new Rectangle(0, 0, image.Width, image.Height);
-            for (int xx = rectangle.X; xx < rectangle.Width; xx++)
+            for (int y = 0; y < data.Height; y++)
             {
-                for (int yy = rectangle.Y; yy < rectangle.Height; yy++)
+                for (int x = 0; x < data.Width; x++)
                 {
-                    int avgR = 0, avgG = 0, avgB = 0;
-                    int blurPixelCount = 0;
+                    // Pobieramy adres bajtu dla danego piksela
+                    int i = y * Math.Abs(data.Stride) + x * 4;
 
-                    // average the color of the red, green and blue for each pixel in the
-                    //blur size while making sure you don't go outside the image bounds
-                    //for (int x = xx; (x < xx + tempBlurSize && x < image.Width); x++)
-                    //{
-                    //    for (int y = yy; (y < yy + tempBlurSize && y < image.Height); y++)
-                    //    {
-                    //        if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > 10000)
-                    //        {
-                    //            System.Drawing.Color pixel = blurred.GetPixel(x, y);
+                    // Tworzymy zmienne do przechowywania wartości składowych RGB dla danego piksela oraz wartość zmiennej wielkości macierzy
+                    double blue = 0, green = 0, red = 0, counter = 0;
 
-                    //            avgR += pixel.R;
-                    //            avgG += pixel.G;
-                    //            avgB += pixel.B;
-
-                    //            blurPixelCount++;
-                    //        }
-
-                    //    }
-                    //}
-
-                    for (int y = yy; (y < yy + tempBlurSize && y < image.Height); y++)
+                    // Przechodzimy po pikselach wokół danego piksela
+                    for (int dy = -blurSize; dy <= blurSize; dy++)
                     {
-                        for (int x = xx; (x < xx + tempBlurSize && x < image.Width); x++)
+                        for(int dx = -blurSize; dx <= blurSize; dx++)
                         {
-                            if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > 10000)
+                            //Tworzymy zmienne które odpowiadają za pozycje w macierzy 
+                            int posX = x + dx;
+                            int posY = y + dy;
+                            if(posX >= 0 && posX < data.Width && posY >= 0 && posY < data.Height)
                             {
-                                System.Drawing.Color pixel = blurred.GetPixel(x, y);
-                                //System.Drawing.Color pixel = blurred.GetPixel(Math.Abs(x), Math.Abs(y));
+                                // Pobieramy adres bajtu dla piksela wokół danego piksela
+                                int j = posY * Math.Abs(data.Stride) + posX * 4;
 
-                                avgR += pixel.R;
-                                avgG += pixel.G;
-                                avgB += pixel.B;
-
-                                blurPixelCount++;
+                                // Pobieramy wartości składowych RGB dla tego piksela
+                                blue += bitmapBytes[j];
+                                green += bitmapBytes[j + 1];
+                                red += bitmapBytes[j + 2];
                             }
-
+                            counter++;
                         }
                     }
-                    if (blurPixelCount > 0)
-                        {
-                            avgR = avgR / blurPixelCount;
-                            avgG = avgG / blurPixelCount;
-                            avgB = avgB / blurPixelCount;
-                        }
+                    // Dzielimy sumę wartości składowych przez liczbę pikseli wokół danego piksela, aby obliczyć średnią
+                    blue /= counter;
+                    green /= counter;
+                    red /= counter;
 
-
-                    // now that we know the average for the blur size, set each pixel to that color
-
-                    for (int x = xx; x < xx + tempBlurSize && x < image.Width && x < rectangle.Width; x++)
-                        for (int y = yy; y < yy + tempBlurSize && y < image.Height && y < rectangle.Height; y++)
-                        {
-                            if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > 10000)
-                            {
-                                image.SetPixel(x, y, System.Drawing.Color.FromArgb(avgR, avgG, avgB));
-                            }
-                        }
-
-                    //for (int y = yy; y < yy + tempBlurSize && y < image.Height && y < rectangle.Height; y++)
-                    //    for (int x = xx; x < xx + tempBlurSize && x < image.Width && x < rectangle.Width; x++)
-                    //    {
-                    //        if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > 10000)
-                    //        {
-                    //            image.SetPixel(x, y, System.Drawing.Color.FromArgb(avgR, avgG, avgB));
-                    //        }
-                    //    }
+                    bitmapBytes[i] = (byte)blue;
+                    bitmapBytes[i + 1] = (byte)green;
+                    bitmapBytes[i + 2] = (byte)red;
                 }
             }
-            return image;
-        }
+            Marshal.Copy(bitmapBytes, 0, ptr, bytes);
 
-        public Bitmap CropImage(Bitmap source, Rectangle section)
-        {
-            var bitmap = new Bitmap(section.Width, section.Height);
-            using (var g = Graphics.FromImage(bitmap))
-            {
-                g.DrawImage(source, 0, 0, section, GraphicsUnit.Pixel);
-                return bitmap;
-            }
+            image.UnlockBits(data);
+            return image;
         }
 
         private void uploadButton_Click(object sender, RoutedEventArgs e)

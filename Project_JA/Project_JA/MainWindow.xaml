@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Project_JA"
         mc:Ignorable="d"
-        Title="MainWindow" Height="649" Width="1139">
+        Title="MainWindow" Height="1080" Width="1920">
     <Grid Background="Gray">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="55*"/>
@@ -15,20 +15,44 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <Border BorderBrush="White" BorderThickness="2" CornerRadius="25"></Border>
-        <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Column="0" Width="200">
-            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" IsEnabled="False" Height="50px" Name="runButton" Click="runButton_Click" Content="RUN"></Button>
-                <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="50px"  x:Name="uploadButton" Click="uploadButton_Click" Content="UPLOAD"/>
-                <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="50px"  x:Name="saveButton" Click="saveButton_Click" Content="SAVE"/>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Column="0" Width="300">
+            <StackPanel Margin="0,0,-60,0">
+                <Viewbox Stretch="Uniform">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" IsEnabled="False" Height="105" Name="runButton" Click="runButton_Click" Content="RUN" Width="379">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="25"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Viewbox>
+                <Viewbox Stretch="Uniform">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="uploadButton" Click="uploadButton_Click" Content="UPLOAD" Width="379">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="25"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Viewbox>
+                <Viewbox Stretch="Uniform">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="saveButton" Click="saveButton_Click" Content="SAVE" Width="379">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="25"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Viewbox>
             </StackPanel>
             <RadioButton VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="buttonCsharp"/>
             <RadioButton VerticalAlignment="Center" HorizontalAlignment="Right" x:Name="buttonASM"/>
-            <StackPanel VerticalAlignment="Center" Margin="35,0,0,0" Height="315">
-                <Slider Margin="2,269,-2,10"  Name="amountOfThreads" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1"></Slider>
-                <TextBox Text="{Binding ElementName=amountOfThreads, Path=Value, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet"/>
+            <StackPanel VerticalAlignment="Top" Margin="22,394,-38,0" Height="356">
+                <Slider Margin="2,269,-2,10"  Name="amountOfThreads" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20"></Slider>
+                <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Bottom">
-                <TextBlock Height="50" Width="100" Text="Time:"></TextBlock>
+                <TextBlock Height="50" Width="100" Text="Time:" FontSize="40"></TextBlock>
                 <TextBlock x:Name="timeText" Height="50" Width="100"></TextBlock>
             </StackPanel>
         </Grid>
@@ -36,10 +60,9 @@
         <WrapPanel x:Name="wp" HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
             <Grid Width="{Binding Path=ActualWidth, ElementName=wp}">
                 <WrapPanel>
-                    
+                    <Image Margin="100 0" Name="imageBefore" Height="1067" Width="452" HorizontalAlignment="Center"/>
+                    <Image Margin="100 0" x:Name="imageAfter" Height="1067" Width="452"  HorizontalAlignment="Center"/>
                 </WrapPanel>
-                <Image Name="imageBefore" Height="{Binding Path=ActualHeight, ElementName=wp}" Width="200" VerticalAlignment="Stretch" HorizontalAlignment="Center" Margin="20 20 540 20"></Image>
-                <Image Name="imageAfter" Height="{Binding Path=ActualHeight, ElementName=wp}" Width="200" VerticalAlignment="Stretch"  HorizontalAlignment="Center" Margin="220 20 20 20"></Image>
             </Grid>
         </WrapPanel>
     </Grid>
