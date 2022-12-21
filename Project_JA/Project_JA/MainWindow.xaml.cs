@@ -31,42 +31,35 @@ namespace Project_JA
         public MainWindow()
         {
             InitializeComponent();
+
+            amountOfThreads.Value = Environment.ProcessorCount;
         }
 
         private static ManualResetEvent resetEvent = new ManualResetEvent(false);
 
         public Bitmap bitmap;
-        public Int32 blurSize = 3;
+        public Bitmap handleBitmap;
+        public int threads = Environment.ProcessorCount;
+        public Int32 blurSize;
+        public int radius = 0;
 
         private void runButton_Click(object sender, RoutedEventArgs e)
         {
+            spinner.Visibility = Visibility.Visible;
+            bitmap = new Bitmap(handleBitmap);
+
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            bitmap = Blur();
+            bitmap = blurWithThreads();
 
             watch.Stop();
 
-            timeText.Text = watch.ElapsedMilliseconds.ToString();
+            timeText.Text = watch.Elapsed.Seconds.ToString();
 
-            bitmap.Save("D:\\Pobrane\\blur3.png");
-
-            BitmapImage bitmapImageAfter = new BitmapImage(new Uri("D:\\Pobrane\\blur3.png"));
+            BitmapImage bitmapImageAfter = chamgeBitmapToBitmapImage(bitmap);
 
             imageAfter.Source = bitmapImageAfter;
         }
-
-
-       private void test()
-       {
-            for (int i = 0; i < 10; i++)
-            {
-                ThreadPool.QueueUserWorkItem(
-                 new WaitCallback(delegate (object state) {
-                     MyMethod(1);
-                }), null);
-            }
-       }
-
        private static void MyMethod(int x)
         {
             Thread thread = Thread.CurrentThread;
@@ -82,7 +75,7 @@ namespace Project_JA
             IntPtr ptr = data.Scan0;
 
             int bytes = data.Stride * data.Height;
-            byte[] bitmapBytes = new byte[bytes];
+            byte[] bitmapBytes = new byte[bytes];   
 
             Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
@@ -121,16 +114,117 @@ namespace Project_JA
                     blue /= counter;
                     green /= counter;
                     red /= counter;
-
-                    bitmapBytes[i] = (byte)blue;
-                    bitmapBytes[i + 1] = (byte)green;
-                    bitmapBytes[i + 2] = (byte)red;
+                    
+                    if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > Math.Pow(radius,2))
+                    {
+                        bitmapBytes[i] = (byte)blue;
+                        bitmapBytes[i + 1] = (byte)green;
+                        bitmapBytes[i + 2] = (byte)red;
+                    }
+                   
                 }
             }
             Marshal.Copy(bitmapBytes, 0, ptr, bytes);
 
             image.UnlockBits(data);
             return image;
+        }
+
+        private Bitmap blurWithThreads()
+        {
+            Bitmap image = bitmap;
+            BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            IntPtr ptr = data.Scan0;
+
+            int bytes = data.Stride * data.Height;
+            byte[] bitmapBytes = new byte[bytes];
+
+            Marshal.Copy(ptr, bitmapBytes, 0, bytes);
+
+            Parallel.For(0, data.Height, new ParallelOptions {  MaxDegreeOfParallelism = threads }, y =>
+            {
+                for (int x=0; x<data.Width; x++)
+                {
+                    // Pobieramy adres bajtu dla danego piksela
+                    int i = y * Math.Abs(data.Stride) + x * 4;
+
+                    // Tworzymy zmienne do przechowywania wartości składowych RGB dla danego piksela oraz wartość zmiennej wielkości macierzy
+                    double blue = 0, green = 0, red = 0, counter = 0;
+
+                    // Przechodzimy po pikselach wokół danego piksela
+                    for (int dy = -blurSize; dy <= blurSize; dy++)
+                    {
+                        for (int dx = -blurSize; dx <= blurSize; dx++)
+                        {
+                            //Tworzymy zmienne które odpowiadają za pozycje w macierzy 
+                            int posX = x + dx;
+                            int posY = y + dy;
+                            if (posX >= 0 && posX < data.Width && posY >= 0 && posY < data.Height)
+                            {
+                                // Pobieramy adres bajtu dla piksela wokół danego piksela
+                                int j = posY * Math.Abs(data.Stride) + posX * 4;
+
+                                // Pobieramy wartości składowych RGB dla tego piksela
+                                blue += bitmapBytes[j];
+                                green += bitmapBytes[j + 1];
+                                red += bitmapBytes[j + 2];
+                            }
+                            counter++;
+                        }
+                    }
+                    // Dzielimy sumę wartości składowych przez liczbę pikseli wokół danego piksela, aby obliczyć średnią
+                    blue /= counter;
+                    green /= counter;
+                    red /= counter;
+
+                    if (Math.Pow((x - data.Width / 2), 2) + Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
+                    {
+                        bitmapBytes[i] = (byte)blue;
+                        bitmapBytes[i + 1] = (byte)green;
+                        bitmapBytes[i + 2] = (byte)red;
+                    }
+                }
+            });
+            Marshal.Copy(bitmapBytes, 0, ptr, bytes);
+
+            image.UnlockBits(data);
+            return image;
+        }
+
+        private void makeTasks(byte[] pixels, int h, int w)
+        {
+            //int validPixelsCount = pixels.Length/4 - (blurSize - 1) * (h + w - blurSize + 1); 
+            byte[][] tempTable = new byte[pixels.Length][];
+            for (int j = 0; j < h; j++)
+            {
+                for (int i = 0; i < w * 4; i+=4)
+                {
+                    byte[] values = new byte[(int)Math.Pow(blurSize * 2 + 1, 2)];
+                    for (int dy = -blurSize; dy <= blurSize; dy++)
+                    {
+                        for (int dx = -blurSize; dx <= blurSize; dx++)
+                        {
+                            //Tworzymy zmienne które odpowiadają za pozycje w macierzy 
+                            int posX = i + dx * 4;
+                            int posY = j + dy;
+                            if (i + dx >= blurSize && j + dy >= blurSize && i + dx <= w && j + dy <=h)
+                            {
+                                // Pobieramy adres bajtu dla piksela wokół danego piksela
+                                int dj = posY * w * 4 + posX;
+
+                                // Pobieramy wartości składowych RGB dla tego piksela
+                            } 
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                    var pixel = i + j * w * 4;
+                }
+            }
+
         }
 
         private void uploadButton_Click(object sender, RoutedEventArgs e)
@@ -160,17 +254,57 @@ namespace Project_JA
                 {
                     fileContent = reader.ReadToEnd();
                     bitmap = new Bitmap(openFileDialog.FileName);
+                    handleBitmap = new Bitmap(openFileDialog.FileName);
                     BitmapImage bitmapImageBefore = new BitmapImage(new Uri(openFileDialog.FileName));
                     imageBefore.Source = bitmapImageBefore;
+                    imageAfter.Source = new BitmapImage();
                     runButton.IsEnabled = true;
+                    saveButton.IsEnabled = false;
+
+                    sizeOfRadius.Maximum = (bitmap.Width-10)/2;
                 }
             }
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private BitmapImage chamgeBitmapToBitmapImage(Bitmap image)
         {
-            test();
+            MemoryStream stream = new MemoryStream();
+            image.Save(stream, ImageFormat.Jpeg);
+            stream.Position = 0;
+
+            // utwórz obiekt BitmapImage z danych strumienia
+            BitmapImage bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = stream;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            spinner.Visibility = Visibility.Hidden;
+            saveButton.IsEnabled = true;
+
+            return bitmapImage;
         }
 
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            bitmap.Save("D:\\Pobrane\\blur3.png");
+            MessageBox.Show("Your photo has been saved!", "Success");
+        }
+
+        private void amountOfThreads_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            threads = (int)amountOfThreads.Value;
+        }
+
+        private void blurSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            blurSize = (Int32)sizeOfBlur.Value;
+        }
+
+        private void radius_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            radius = (int)sizeOfRadius.Value;
+        }
     }
 }

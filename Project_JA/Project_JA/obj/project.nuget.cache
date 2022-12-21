@@ -1,14 +1,25 @@
 {
   "version": 2,
-  "dgSpecHash": "/dG6McrvZlgIRCMtcvtPA4p64UWttdETGbLMqI/YEBgK29bjvwLJi2/cXxqWjZqCm9rkk5R864SLe5WjG8u3ig==",
+  "dgSpecHash": "IX8my+gYDP7Gb+TOJkwRz4j6/7qQzq0h4oty4Fqka4hrjHWN8DQH/vykI8g31GNbqIy/2EGFEbm18Ra25D4yGA==",
   "success": true,
   "projectFilePath": "D:\\Program Files (x86)\\Studia\\Język Asemblera\\Projekt\\repo\\Project_JA\\Project_JA\\Project_JA.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\michr\\.nuget\\packages\\fontawesome.wpf\\4.7.0.9\\fontawesome.wpf.4.7.0.9.nupkg.sha512",
     "C:\\Users\\michr\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\michr\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512",
     "C:\\Users\\michr\\.nuget\\packages\\system.windows.forms.ribbon35\\3.5.8\\system.windows.forms.ribbon35.3.5.8.nupkg.sha512"
   ],
   "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'FontAwesome.WPF 4.7.0.9' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0-windows7.0'. This package may not be fully compatible with your project.",
+      "libraryId": "FontAwesome.WPF",
+      "targetGraphs": [
+        "net6.0-windows7.0"
+      ]
+    },
     {
       "code": "NU1701",
       "level": "Warning",

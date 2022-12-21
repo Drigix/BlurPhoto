@@ -44,3 +44,4 @@ D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\Project_J
 D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\Project_JA\obj\Debug\net6.0-windows\ref\Project_JA.dll
 D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\Project_JA\obj\Debug\net6.0-windows\Project_JA.pdb
 D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\Project_JA\obj\Debug\net6.0-windows\Project_JA.genruntimeconfig.cache
+D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\Project_JA\bin\Debug\net6.0-windows\FontAwesome.WPF.dll

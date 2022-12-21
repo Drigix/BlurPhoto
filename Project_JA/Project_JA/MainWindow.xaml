@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:local="clr-namespace:Project_JA"
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920">
@@ -14,11 +15,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        <Border BorderBrush="White" BorderThickness="2" CornerRadius="25"></Border>
+        <Border BorderBrush="WhiteSmoke" BorderThickness="8" CornerRadius="25" Margin="0,4,0,18"></Border>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Column="0" Width="300">
             <StackPanel Margin="0,0,-60,0">
                 <Viewbox Stretch="Uniform">
-                    <Button Background="BlueViolet" Margin="20 20 5 20" IsEnabled="False" Height="105" Name="runButton" Click="runButton_Click" Content="RUN" Width="379">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" IsEnabled="False" Height="105" Name="runButton" Click="runButton_Click" Content="RUN" Width="379" FontSize="35" FontWeight="Bold">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="25"/>
@@ -27,7 +28,7 @@
                     </Button>
                 </Viewbox>
                 <Viewbox Stretch="Uniform">
-                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="uploadButton" Click="uploadButton_Click" Content="UPLOAD" Width="379">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="uploadButton" Click="uploadButton_Click" Content="UPLOAD" Width="379" FontSize="35" FontWeight="Bold">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="25"/>
@@ -36,7 +37,7 @@
                     </Button>
                 </Viewbox>
                 <Viewbox Stretch="Uniform">
-                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="saveButton" Click="saveButton_Click" Content="SAVE" Width="379">
+                    <Button Background="BlueViolet" Margin="20 20 5 20" HorizontalAlignment="Stretch" Height="105"  x:Name="saveButton" Click="saveButton_Click" Content="SAVE" Width="379" FontSize="35" FontWeight="Bold" IsEnabled="False">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="25"/>
@@ -45,24 +46,53 @@
                     </Button>
                 </Viewbox>
             </StackPanel>
-            <RadioButton VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="buttonCsharp"/>
-            <RadioButton VerticalAlignment="Center" HorizontalAlignment="Right" x:Name="buttonASM"/>
-            <StackPanel VerticalAlignment="Top" Margin="22,394,-38,0" Height="356">
-                <Slider Margin="2,269,-2,10"  Name="amountOfThreads" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20"></Slider>
-                <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30"/>
+            <DockPanel Margin="50,404,-10,560" Height="100">
+                <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Left">
+                    <RadioButton x:Name="buttonCsharp" RenderTransformOrigin="1.667,0.716" Height="15" Width="13"/>
+                    <TextBox Text="C#" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"  />
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Width="100">
+                    <RadioButton x:Name="buttonASM" Height="15" Width="20"/>
+                    <TextBox Text="ASM" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" Height="41" Width="83"  />
+                </StackPanel>
+            </DockPanel>
+            <StackPanel VerticalAlignment="Top" Margin="10,532,-70,0" Height="415">
+                <TextBlock Text="Amount of threads" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+                <Slider   Name="amountOfThreads" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="amountOfThreads_ValueChanged"></Slider>
+                <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
+
+                <TextBlock Text="Blur size" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+                <Slider  Name="sizeOfBlur" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="blurSize_ValueChanged"></Slider>
+                <TextBox Text="{Binding Value, ElementName=sizeOfBlur, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
+
+                <TextBlock Text="Radius size" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+                <Slider  Name="sizeOfRadius" Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="radius_ValueChanged" ></Slider>
+                <TextBox Text="{Binding Value, ElementName=sizeOfRadius, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="105" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
             </StackPanel>
-            <StackPanel VerticalAlignment="Bottom">
-                <TextBlock Height="50" Width="100" Text="Time:" FontSize="40"></TextBlock>
-                <TextBlock x:Name="timeText" Height="50" Width="100"></TextBlock>
-            </StackPanel>
+            <WrapPanel VerticalAlignment="Bottom" Margin="30,0,-30,105">
+                <TextBlock Height="50" Width="110" Text="Time:" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+                <TextBlock x:Name="timeText" Height="50" Width="100" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+            </WrapPanel>
         </Grid>
 
-        <WrapPanel x:Name="wp" HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-            <Grid Width="{Binding Path=ActualWidth, ElementName=wp}">
-                <WrapPanel>
-                    <Image Margin="100 0" Name="imageBefore" Height="1067" Width="452" HorizontalAlignment="Center"/>
-                    <Image Margin="100 0" x:Name="imageAfter" Height="1067" Width="452"  HorizontalAlignment="Center"/>
-                </WrapPanel>
+        <WrapPanel x:Name="wp" HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Horizontal" Grid.Column="1">
+            <Grid Margin="0 30" Width="{Binding ActualWidth, ElementName=wp}">
+                <Border BorderBrush="WhiteSmoke" BorderThickness="8" CornerRadius="25" Margin="21,-26,25,-28"/>
+                <Grid>
+                    <fa:ImageAwesome x:Name="spinner" Margin="650 0 0 0" Icon="CircleOutlineNotch" Spin="True" SpinDuration="10"  Height="200" Visibility="Hidden">
+                        <fa:ImageAwesome.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="17.624"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </fa:ImageAwesome.RenderTransform>
+                    </fa:ImageAwesome>
+                    <Image Margin="0 0 750 0" x:Name="imageBefore" Height="986" Width="562" />
+                    
+                    <Image  Margin="650 0 0 0" x:Name="imageAfter" Height="986" Width="552"/>
+                </Grid>
             </Grid>
         </WrapPanel>
     </Grid>
