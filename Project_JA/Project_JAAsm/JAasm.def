@@ -1,0 +1,2 @@
+LIBRARY JAasm
+EXPORTS MyProc1

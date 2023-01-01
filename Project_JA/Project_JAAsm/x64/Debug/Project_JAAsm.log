@@ -1,0 +1,3 @@
+﻿  Assembling JAasm.asm...
+JAasm.asm(125): error A2152: coprocessor register cannot be first operand
+D:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: The command "ml64.exe /c /nologo /Zi /Fo"x64\Debug\JAasm.obj" /W3 /errorReport:prompt  /TaJAasm.asm" exited with code 1.

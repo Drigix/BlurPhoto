@@ -1,0 +1,2 @@
+﻿#define JAASM_API __declspec(dllexport)
+#define JAASM_API __declspec(dllimport)

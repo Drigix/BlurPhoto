@@ -5,7 +5,32 @@
       "ProjectGuid": "2fff04e3-7ce7-4f6c-b985-c21100a03b39",
       "DisplayName": "Project_JA",
       "ColorIndex": 0
+    },
+    "739ce995-0bfa-46d6-93c0-3aff1da20e73": {
+      "ProjectGuid": "739ce995-0bfa-46d6-93c0-3aff1da20e73",
+      "DisplayName": "JAAsm",
+      "ColorIndex": 1
+    },
+    "261982c0-b630-431e-926d-71d549122c92": {
+      "ProjectGuid": "261982c0-b630-431e-926d-71d549122c92",
+      "DisplayName": "Project_JAAsm",
+      "ColorIndex": 2
+    },
+    "7dc9d8fd-c044-4947-aa15-72c04a6fbbe9": {
+      "ProjectGuid": "7dc9d8fd-c044-4947-aa15-72c04a6fbbe9",
+      "DisplayName": "Project_JAAsm",
+      "ColorIndex": 3
+    },
+    "94337dc8-f385-459a-a6df-874107c4cde4": {
+      "ProjectGuid": "94337dc8-f385-459a-a6df-874107c4cde4",
+      "DisplayName": "Project_JAAsm",
+      "ColorIndex": 4
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 5
 }

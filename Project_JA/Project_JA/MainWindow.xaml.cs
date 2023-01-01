@@ -23,11 +23,12 @@ using System.Runtime.InteropServices;
 
 namespace Project_JA
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    
     public partial class MainWindow : Window
     {
+        [DllImport(@"D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.dll", CallingConvention = CallingConvention.Cdecl)]
+        extern static int MyProc1(byte[] bitmapBytes, int width, int heigth, int blurSize, int radius, int y);
+
         public MainWindow()
         {
             InitializeComponent();
@@ -50,24 +51,41 @@ namespace Project_JA
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            bitmap = blurWithThreads();
+            bitmap = Blur();
 
             watch.Stop();
 
-            timeText.Text = watch.Elapsed.Seconds.ToString();
+            //timeText.Text = watch.Elapsed.Milliseconds.ToString();
+            timeText.Text = watch.ElapsedMilliseconds.ToString();
 
             BitmapImage bitmapImageAfter = chamgeBitmapToBitmapImage(bitmap);
 
             imageAfter.Source = bitmapImageAfter;
         }
-       private static void MyMethod(int x)
+       private static void MyMethod(byte[] bitmapBytes)
         {
-            Thread thread = Thread.CurrentThread;
-            string message = $"Background: {thread.IsBackground}, Thread Pool: {thread.IsThreadPoolThread}, Thread ID: {thread.ManagedThreadId}";
-            Trace.WriteLine(message);
+            //Thread thread = Thread.CurrentThread;
+            //string message = $"Background: {thread.IsBackground}, Thread Pool: {thread.IsThreadPoolThread}, Thread ID: {thread.ManagedThreadId}";
+            //Trace.WriteLine(message);
         }
 
         private Bitmap Blur()
+        {
+            if (buttonASM.IsChecked == true)
+            {
+                return blurASM();
+            } 
+            else if (buttonCsharp.IsChecked == true)
+            {
+                return blurWithThreads();
+            } 
+            else
+            {
+                return bitmap;
+            }
+        }
+
+        private Bitmap blurASM()
         {
             Bitmap image = bitmap;
             BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -75,58 +93,24 @@ namespace Project_JA
             IntPtr ptr = data.Scan0;
 
             int bytes = data.Stride * data.Height;
-            byte[] bitmapBytes = new byte[bytes];   
+            byte[] bitmapBytes = new byte[bytes];
 
             Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
-            for (int y = 0; y < data.Height; y++)
-            {
-                for (int x = 0; x < data.Width; x++)
-                {
-                    // Pobieramy adres bajtu dla danego piksela
-                    int i = y * Math.Abs(data.Stride) + x * 4;
-
-                    // Tworzymy zmienne do przechowywania wartości składowych RGB dla danego piksela oraz wartość zmiennej wielkości macierzy
-                    double blue = 0, green = 0, red = 0, counter = 0;
-
-                    // Przechodzimy po pikselach wokół danego piksela
-                    for (int dy = -blurSize; dy <= blurSize; dy++)
-                    {
-                        for(int dx = -blurSize; dx <= blurSize; dx++)
-                        {
-                            //Tworzymy zmienne które odpowiadają za pozycje w macierzy 
-                            int posX = x + dx;
-                            int posY = y + dy;
-                            if(posX >= 0 && posX < data.Width && posY >= 0 && posY < data.Height)
-                            {
-                                // Pobieramy adres bajtu dla piksela wokół danego piksela
-                                int j = posY * Math.Abs(data.Stride) + posX * 4;
-
-                                // Pobieramy wartości składowych RGB dla tego piksela
-                                blue += bitmapBytes[j];
-                                green += bitmapBytes[j + 1];
-                                red += bitmapBytes[j + 2];
-                            }
-                            counter++;
-                        }
-                    }
-                    // Dzielimy sumę wartości składowych przez liczbę pikseli wokół danego piksela, aby obliczyć średnią
-                    blue /= counter;
-                    green /= counter;
-                    red /= counter;
-                    
-                    if (Math.Pow((x - image.Width / 2), 2) + Math.Pow((y - image.Height / 2), 2) > Math.Pow(radius,2))
-                    {
-                        bitmapBytes[i] = (byte)blue;
-                        bitmapBytes[i + 1] = (byte)green;
-                        bitmapBytes[i + 2] = (byte)red;
-                    }
-                   
-                }
-            }
+            Parallel.For(0, data.Height, new ParallelOptions { MaxDegreeOfParallelism = threads }, y => {
+                MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, y);
+            });
+            
+            //for (int i = 0; i < data.Height - 10; i++)
+            //{
+            //    int result = MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, i);
+            //}
+            //int result = MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, 10);
+            //Trace.WriteLine(result);
             Marshal.Copy(bitmapBytes, 0, ptr, bytes);
 
             image.UnlockBits(data);
+
             return image;
         }
 
@@ -178,7 +162,9 @@ namespace Project_JA
                     green /= counter;
                     red /= counter;
 
-                    if (Math.Pow((x - data.Width / 2), 2) + Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
+
+                    // Sprawdzamy czy x i y znajdują się obszarze okręgu o promieniu wybranym wcześniej przez użytkownika
+                    if (Math.Pow((x - data.Width / 2), 2) - Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
                     {
                         bitmapBytes[i] = (byte)blue;
                         bitmapBytes[i + 1] = (byte)green;
@@ -258,7 +244,10 @@ namespace Project_JA
                     BitmapImage bitmapImageBefore = new BitmapImage(new Uri(openFileDialog.FileName));
                     imageBefore.Source = bitmapImageBefore;
                     imageAfter.Source = new BitmapImage();
-                    runButton.IsEnabled = true;
+                    if(buttonASM.IsChecked == true || buttonCsharp.IsChecked == true)
+                    {
+                        runButton.IsEnabled = true;
+                    }
                     saveButton.IsEnabled = false;
 
                     sizeOfRadius.Maximum = (bitmap.Width-10)/2;
@@ -305,6 +294,24 @@ namespace Project_JA
         private void radius_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             radius = (int)sizeOfRadius.Value;
+        }
+
+        private void buttonCsharp_Checked(object sender, RoutedEventArgs e)
+        {
+            if (buttonASM.IsChecked == true)
+            {
+                buttonASM.IsChecked = !buttonASM.IsChecked;
+            }
+            runButton.IsEnabled = true;
+        }
+
+        private void buttonASM_Checked(object sender, RoutedEventArgs e)
+        {
+            if(buttonCsharp.IsChecked == true)
+            {
+                buttonCsharp.IsChecked = !buttonCsharp.IsChecked;
+            }
+            runButton.IsEnabled = true;
         }
     }
 }

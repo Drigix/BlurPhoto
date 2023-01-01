@@ -48,17 +48,17 @@
             </StackPanel>
             <DockPanel Margin="50,404,-10,560" Height="100">
                 <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Left">
-                    <RadioButton x:Name="buttonCsharp" RenderTransformOrigin="1.667,0.716" Height="15" Width="13"/>
+                    <RadioButton x:Name="buttonCsharp" RenderTransformOrigin="1.667,0.716" Height="15" Width="13" Checked="buttonCsharp_Checked"/>
                     <TextBox Text="C#" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"  />
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Width="100">
-                    <RadioButton x:Name="buttonASM" Height="15" Width="20"/>
+                    <RadioButton x:Name="buttonASM" Height="15" Width="20" Checked="buttonASM_Checked"/>
                     <TextBox Text="ASM" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" Height="41" Width="83"  />
                 </StackPanel>
             </DockPanel>
             <StackPanel VerticalAlignment="Top" Margin="10,532,-70,0" Height="415">
                 <TextBlock Text="Amount of threads" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
-                <Slider   Name="amountOfThreads" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="amountOfThreads_ValueChanged"></Slider>
+                <Slider   Name="amountOfThreads" Minimum="1" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="amountOfThreads_ValueChanged"></Slider>
                 <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
 
                 <TextBlock Text="Blur size" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
