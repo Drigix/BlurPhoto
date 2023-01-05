@@ -1,3 +1,4 @@
 ﻿  Assembling JAasm.asm...
-JAasm.asm(125): error A2152: coprocessor register cannot be first operand
-D:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VC\v170\BuildCustomizations\masm.targets(70,5): error MSB3721: The command "ml64.exe /c /nologo /Zi /Fo"x64\Debug\JAasm.obj" /W3 /errorReport:prompt  /TaJAasm.asm" exited with code 1.
+     Creating library D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.lib and object D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.exp
+Project_JAAsm.exp : warning LNK4070: /OUT:JAasm.dll directive in .EXP differs from output filename 'D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.dll'; ignoring directive
+  Project_JAAsm.vcxproj -> D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.dll

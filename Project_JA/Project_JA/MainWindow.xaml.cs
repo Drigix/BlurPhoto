@@ -97,15 +97,16 @@ namespace Project_JA
 
             Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
-            Parallel.For(0, data.Height, new ParallelOptions { MaxDegreeOfParallelism = threads }, y => {
+            Parallel.For(0, data.Height, new ParallelOptions { MaxDegreeOfParallelism = threads }, y =>
+            {
                 MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, y);
             });
-            
+
             //for (int i = 0; i < data.Height - 10; i++)
             //{
             //    int result = MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, i);
             //}
-            //int result = MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, 10);
+            //int result = MyProc1(bitmapBytes, data.Width, data.Height, blurSize, radius, 0);
             //Trace.WriteLine(result);
             Marshal.Copy(bitmapBytes, 0, ptr, bytes);
 
@@ -126,9 +127,56 @@ namespace Project_JA
 
             Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
-            Parallel.For(0, data.Height, new ParallelOptions {  MaxDegreeOfParallelism = threads }, y =>
+            // Parallel.For(0, data.Height, new ParallelOptions { MaxDegreeOfParallelism = threads }, y =>
+            //{
+            //    for (int x = 0; x < data.Width; x++)
+            //    {
+            //         // Pobieramy adres bajtu dla danego piksela
+            //         int i = y * Math.Abs(data.Stride) + x * 4;
+
+            //         // Tworzymy zmienne do przechowywania wartości składowych RGB dla danego piksela oraz wartość zmiennej wielkości macierzy
+            //         double blue = 0, green = 0, red = 0, counter = 0;
+
+            //         // Przechodzimy po pikselach wokół danego piksela
+            //         for (int dy = -blurSize; dy <= blurSize; dy++)
+            //        {
+            //            for (int dx = -blurSize; dx <= blurSize; dx++)
+            //            {
+            //                 //Tworzymy zmienne które odpowiadają za pozycje w macierzy 
+            //                 int posX = x + dx;
+            //                int posY = y + dy;
+            //                if (posX >= 0 && posX < data.Width && posY >= 0 && posY < data.Height)
+            //                {
+            //                     // Pobieramy adres bajtu dla piksela wokół danego piksela
+            //                     int j = posY * Math.Abs(data.Stride) + posX * 4;
+
+            //                     // Pobieramy wartości składowych RGB dla tego piksela
+            //                     blue += bitmapBytes[j];
+            //                    green += bitmapBytes[j + 1];
+            //                    red += bitmapBytes[j + 2];
+            //                }
+            //                counter++;
+            //            }
+            //        }
+            //        // Dzielimy sumę wartości składowych przez liczbę pikseli wokół danego piksela, aby obliczyć średnią
+            //        blue /= counter;
+            //        green /= counter;
+            //        red /= counter;
+
+
+            //        // Sprawdzamy czy x i y znajdują się obszarze okręgu o promieniu wybranym wcześniej przez użytkownika
+            //        if (Math.Pow((x - data.Width / 2), 2) + Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
+            //        {
+            //            bitmapBytes[i] = (byte)blue;
+            //            bitmapBytes[i + 1] = (byte)green;
+            //            bitmapBytes[i + 2] = (byte)red;
+            //        }
+            //    }
+            //});
+
+            for (int y = 1250; y < data.Height; y++)
             {
-                for (int x=0; x<data.Width; x++)
+                for (int x = 1250; x < data.Width; x++)
                 {
                     // Pobieramy adres bajtu dla danego piksela
                     int i = y * Math.Abs(data.Stride) + x * 4;
@@ -158,20 +206,21 @@ namespace Project_JA
                         }
                     }
                     // Dzielimy sumę wartości składowych przez liczbę pikseli wokół danego piksela, aby obliczyć średnią
-                    blue /= counter;
-                    green /= counter;
-                    red /= counter;
 
 
                     // Sprawdzamy czy x i y znajdują się obszarze okręgu o promieniu wybranym wcześniej przez użytkownika
-                    if (Math.Pow((x - data.Width / 2), 2) - Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
+                    if (Math.Pow((x - data.Width / 2), 2) + Math.Pow((y - data.Height / 2), 2) > Math.Pow(radius, 2))
                     {
+                        blue /= counter;
+                        green /= counter;
+                        red /= counter;
+
                         bitmapBytes[i] = (byte)blue;
                         bitmapBytes[i + 1] = (byte)green;
                         bitmapBytes[i + 2] = (byte)red;
                     }
                 }
-            });
+            }
             Marshal.Copy(bitmapBytes, 0, ptr, bytes);
 
             image.UnlockBits(data);
