@@ -71,7 +71,7 @@
             </StackPanel>
             <WrapPanel VerticalAlignment="Bottom" Margin="30,0,-30,105">
                 <TextBlock Height="50" Width="110" Text="Time:" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
-                <TextBlock x:Name="timeText" Height="50" Width="100" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+                <TextBlock x:Name="timeText" Height="50" Width="150" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
             </WrapPanel>
         </Grid>
 

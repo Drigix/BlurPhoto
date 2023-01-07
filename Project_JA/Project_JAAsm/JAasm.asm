@@ -8,7 +8,7 @@ alfa dd 0
 
 .code
 MyProc1 proc
-	;skopiowanie bitmapBytes
+    ;skopiowanie bitmapBytes
     movq mm7, rcx
 
     ;zanegowanie i skopiowanie -blurSize
@@ -22,20 +22,15 @@ MyProc1 proc
 
     ;skopiowanie data.Width
     movq mm6, rbx
-    ;wyzerowanie licznika pêtli
-    xor rcx, rcx
 
-     iterate_row:
-        ;inicjowanie danych
-        mov rax, 0
-        movd mm0, rax
-        mov rax, 0
-        movd mm1, rax
-        mov rax, 0
-        movd mm2, rax
-        mov [counter], 0
+    mov rcx, r11
 
-        ;zmienna dy
+    mov rax, 0
+    movq mm0, rax
+    movq mm1, rax
+    movq mm2, rax
+    
+    ;zmienna dy
         movq r12, mm5
 
             row_loop: 
@@ -74,15 +69,6 @@ MyProc1 proc
                 imul rax, 4
                 add rdx, rax; wartoœæ piksela znajdujê sie w rdx
 
-                mov rax, r10
-                movd r13, mm6
-                imul r13, 4 ;obliczamy data.Stride(data.Width * 4)
-                imul rax, r13
-                 mov rdx, rax;przechowujemy pomno¿on¹ wartoœæ w rdx
-                mov rax, rcx
-                imul rax, 4
-                add rdx, rax; wartoœæ piksela znajdujê sie w rdx
-
 
                 movq rbx, mm7
                 mov eax, [rbx+rdx]
@@ -99,10 +85,7 @@ MyProc1 proc
                 movzx eax, al
                 movq mm3, rax
                 paddw mm2, mm3
-                mov eax, [rbx+rdx]
-                shr eax, 24 
-                movzx eax, al
-                mov [alfa], eax
+                
 
                 col_loop_check:
                     inc [counter]
@@ -117,79 +100,19 @@ MyProc1 proc
                 movd rax, mm4
                 cmp rax, r12
                 jne row_loop
-        
-        ;sprawdzam warunek czy punkty z najduj¹ siê w wybranym okrêgu   
-        movd r13, mm6
-        shr r13, 1
-        mov rax, rcx
-        sub rax, r13
-        imul rax, rax
-        jns positive_x
-        neg rax
-        positive_x:
-        mov rbx, rax
-
-        mov r13, r8
-        shr r13, 1
-        mov rax, r10
-        sub rax, r13
-        imul rax, rax
-        jns positive_y
-        neg rax
-        positive_y:
-        add rbx, rax
-
-        mov rax, 200
-        imul rax, rax
-
-        cmp rbx, rax
-        jle iterate_row_check
-
-        ;dzielimy wartoœcix
-        cvtpi2ps xmm0, mm0
-        cvtpi2ps xmm1, mm1
-        cvtpi2ps xmm2, mm2
-        cvtpi2ps xmm3, mm3
-        divss xmm0, xmm3
-        divss xmm1, xmm3
-        divss xmm2, xmm3
-        cvtps2pi mm0, xmm0
-        cvtps2pi mm1, xmm1
-        cvtps2pi mm2, xmm2
-       
-        
-        ;ustawiamy wartoœæi 
-         mov rax, r10
-         movd r13, mm6
-         imul r13, 4 ;obliczamy data.Stride(data.Width * 4)
-         imul rax, r13
-         mov r14, rax;przechowujemy pomno¿on¹ wartoœæ w rdx
-         mov rax, rcx
-         imul rax, 4
-         add r14, rax; wartoœæ piksela znajdujê sie w rdx
-
-         movq rbx, mm7
-         movd edx, mm0 ; Przenosi pierwsze 32 bity z rejestru MM0 do rejestru EDX
-         movd ebx, mm1 ; Przenosi pierwsze 32 bity z rejestru MM1 do rejestru ECX
-         shl ebx, 8 ; Przesuwa bity w ECX o 8 pozycji w lewo
-         or edx, ebx ; £¹czy wartoœæ z ECX z EDX
-         movd ebx, mm2 ; Przenosi pierwsze 32 bity z rejestru MM3 do rejestru ECX
-         shl ebx, 16 ; Przesuwa bity w ECX o 16 pozycji w lewo
-         or edx, ebx ; £¹czy wartoœæ z ECX z EDX
-         mov ebx, [alfa] ; Przenosi pierwsze 32 bity z rejestru MM3 do rejestru ECX
-         shl ebx, 24 ; Przesuwa bity w ECX o 16 pozycji w lewo
-         or edx, ebx ; £¹czy wartoœæ z ECX z EDX
-         mov eax, edx ; £¹czy wartoœæ z EDX z EAX
-
-         movq rbx, mm7
-         mov [rbx+r14], eax
-
-        iterate_row_check:
-            add rcx, 1
-            movd rax, mm6 
-            cmp rax, rcx
-            jne iterate_row
-    movd rax, mm1
+    movd rax, mm0
 	ret
 MyProc1 endp
+
+.code
+MyProc2 proc
+    movd rax, mm1
+	ret
+MyProc2 endp
+
+.code
+MyProc3 proc
+    movd rax, mm2
+	ret
+MyProc3 endp
 end
