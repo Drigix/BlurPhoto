@@ -1,4 +1,4 @@
 LIBRARY JAasm
-EXPORTS MyProc1
-EXPORTS MyProc2
-EXPORTS MyProc3
+EXPORTS countUpColors
+EXPORTS returnCountUpGreen
+EXPORTS returnCountUpRed

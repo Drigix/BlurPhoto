@@ -1,13 +1,5 @@
-.data
-blue dd 0
-green dd 0
-red dd 0
-counter dd 0
-bitmapBytes dd 0
-alfa dd 0
-
 .code
-MyProc1 proc
+countUpColors proc
     ;skopiowanie bitmapBytes
     movq mm7, rcx
 
@@ -23,8 +15,7 @@ MyProc1 proc
     ;skopiowanie data.Width
     movq mm6, rbx
 
-    mov rcx, r11
-
+    ;wyzerowanie wartoœæi kolorów
     mov rax, 0
     movq mm0, rax
     movq mm1, rax
@@ -39,14 +30,13 @@ MyProc1 proc
 
               col_loop:
                 ;obliczamy pozycje piksela w macierzy
-                mov rax, rcx
+                mov rax, r11 ;pobranie wartoœci x
                 add rax, r14
                 mov rbx, rax
 
                 mov rax, r10 ;pobranie wartoœci y
                 add rax, r12
                 mov rdx, rax
-
                 
                 ;sprawdzamy warunek czy aktualna pozycje nie znajduje sie poza obrazem
                 cmp rbx, 0
@@ -69,7 +59,6 @@ MyProc1 proc
                 imul rax, 4
                 add rdx, rax; wartoœæ piksela znajdujê sie w rdx
 
-
                 movq rbx, mm7
                 mov eax, [rbx+rdx]
                 movzx eax, al
@@ -85,11 +74,8 @@ MyProc1 proc
                 movzx eax, al
                 movq mm3, rax
                 paddw mm2, mm3
-                
 
                 col_loop_check:
-                    inc [counter]
-                    movd mm3, [counter]
                     add r14, 1
                     movd rax, mm4 
                     cmp rax, r14
@@ -102,17 +88,17 @@ MyProc1 proc
                 jne row_loop
     movd rax, mm0
 	ret
-MyProc1 endp
+countUpColors endp
 
 .code
-MyProc2 proc
+returnCountUpGreen proc
     movd rax, mm1
 	ret
-MyProc2 endp
+returncountUpGreen endp
 
 .code
-MyProc3 proc
+returnCountUpRed proc
     movd rax, mm2
 	ret
-MyProc3 endp
+returncountUpRed endp
 end

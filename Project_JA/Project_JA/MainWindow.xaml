@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <Border BorderBrush="WhiteSmoke" BorderThickness="8" CornerRadius="25" Margin="0,4,0,18"></Border>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Grid.Column="0" Width="300">
-            <StackPanel Margin="0,0,-60,0">
+            <StackPanel Orientation="Vertical" Margin="0,0,-60,0">
                 <Viewbox Stretch="Uniform">
                     <Button Background="BlueViolet" Margin="20 20 5 20" IsEnabled="False" Height="105" Name="runButton" Click="runButton_Click" Content="RUN" Width="379" FontSize="35" FontWeight="Bold">
                         <Button.Resources>
@@ -46,32 +46,72 @@
                     </Button>
                 </Viewbox>
             </StackPanel>
-            <DockPanel Margin="50,404,-10,560" Height="100">
+            <DockPanel Margin="60,424,-20,540" Height="100">
                 <StackPanel HorizontalAlignment="Left" DockPanel.Dock="Left">
-                    <RadioButton x:Name="buttonCsharp" RenderTransformOrigin="1.667,0.716" Height="15" Width="13" Checked="buttonCsharp_Checked"/>
-                    <TextBox Text="C#" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"  />
+                    
+                    <RadioButton x:Name="buttonCsharp" RenderTransformOrigin="1.667,0.716" Height="15" Width="13" Checked="buttonCsharp_Checked" />
+                    <TextBlock Text="C#" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS">
+                        <TextBlock.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="3"/>
+                            </Style>
+                        </TextBlock.Resources>
+                    </TextBlock>
                 </StackPanel>
                 <StackPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Width="100">
                     <RadioButton x:Name="buttonASM" Height="15" Width="20" Checked="buttonASM_Checked"/>
-                    <TextBox Text="ASM" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" Height="41" Width="83"  />
+                    <TextBlock Text="ASM" Background="Gray" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" Height="41" Width="83">
+
+                    </TextBlock>
                 </StackPanel>
             </DockPanel>
             <StackPanel VerticalAlignment="Top" Margin="10,532,-70,0" Height="415">
                 <TextBlock Text="Amount of threads" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
                 <Slider   Name="amountOfThreads" Minimum="1" Maximum="64" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="amountOfThreads_ValueChanged"></Slider>
-                <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
+                <TextBox Text="{Binding Value, ElementName=amountOfThreads, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="45" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
 
                 <TextBlock Text="Blur size" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
-                <Slider  Name="sizeOfBlur" Minimum="1" Maximum="10" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="blurSize_ValueChanged"></Slider>
-                <TextBox Text="{Binding Value, ElementName=sizeOfBlur, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
+                <Slider  Name="sizeOfBlur" Minimum="1" Maximum="7" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="blurSize_ValueChanged"></Slider>
+                <TextBox Text="{Binding Value, ElementName=sizeOfBlur, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="39" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
 
                 <TextBlock Text="Radius size" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center"/>
-                <Slider  Name="sizeOfRadius" Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="radius_ValueChanged" ></Slider>
-                <TextBox Text="{Binding Value, ElementName=sizeOfRadius, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="105" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS"/>
+                <Slider  Name="sizeOfRadius" Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" TickFrequency="1" FontSize="20" ValueChanged="radius_ValueChanged" IsEnabled="false"></Slider>
+                <TextBox Name="sizeOfRadiusTextBox" Text="{Binding Value, ElementName=sizeOfRadius, UpdateSourceTrigger=PropertyChanged}" Background="BlueViolet" Height="42" Width="105" FontSize="30" FontWeight="DemiBold" FontFamily="Comic Sans MS" TextAlignment="Center" IsEnabled="False">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
             </StackPanel>
-            <WrapPanel VerticalAlignment="Bottom" Margin="30,0,-30,105">
+            <WrapPanel VerticalAlignment="Bottom" Margin="40,0,-40,130">
                 <TextBlock Height="50" Width="110" Text="Time:" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
                 <TextBlock x:Name="timeText" Height="50" Width="150" FontWeight="DemiBold" FontSize="40" FontFamily="Comic Sans MS" TextAlignment="Center"/>
+            </WrapPanel>
+            
+            <WrapPanel VerticalAlignment="Bottom" Margin="78,0,18,87">
+               
+                <WrapPanel.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </WrapPanel.Resources  >
+                
+                <RadioButton x:Name="buttonSaveTimes" RenderTransformOrigin="1.667,0.716" Height="15" Width="13" Checked="buttonSaveTimes_Checked" Margin="0 0 10 0"/>
+                <TextBlock Text="Save times to file" Background="Gray" FontSize="20" FontWeight="DemiBold" FontFamily="Comic Sans MS">
+                </TextBlock>
             </WrapPanel>
         </Grid>
 
@@ -90,7 +130,7 @@
                         </fa:ImageAwesome.RenderTransform>
                     </fa:ImageAwesome>
                     <Image Margin="0 0 750 0" x:Name="imageBefore" Height="986" Width="562" />
-                    
+
                     <Image  Margin="650 0 0 0" x:Name="imageAfter" Height="986" Width="552"/>
                 </Grid>
             </Grid>
