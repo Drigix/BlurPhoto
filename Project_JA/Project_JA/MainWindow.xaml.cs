@@ -26,8 +26,8 @@ namespace Project_JA
     
     public partial class MainWindow : Window
     {
-        [DllImport(@"..\x64\Debug\Project_JAAsm.dll", CallingConvention = CallingConvention.Cdecl)]
-        extern static int countUpColors(byte[] bitmapBytes, int width, int heigth, int blurSize, int x, int y, int x2);
+        [DllImport(@"D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.dll", CallingConvention = CallingConvention.Cdecl)]
+        extern static int countUpColors(byte[] bitmapBytes, int width, int heigth, int blurSize, int x, int y);
 
         [DllImport(@"D:\Program Files (x86)\Studia\Język Asemblera\Projekt\repo\Project_JA\x64\Debug\Project_JAAsm.dll", CallingConvention = CallingConvention.Cdecl)]
         extern static int returnCountUpGreen();
@@ -120,6 +120,7 @@ namespace Project_JA
 
             Marshal.Copy(ptr, bitmapBytes, 0, bytes);
 
+
             Parallel.For(0, data.Height, new ParallelOptions { MaxDegreeOfParallelism = threads }, y =>
             {
                 for (int x = 0; x < data.Width; x++)
@@ -129,7 +130,7 @@ namespace Project_JA
                     {
                         int i = y * Math.Abs(data.Stride) + x * 4;
 
-                        int blue = countUpColors(bitmapBytes, data.Width, data.Height, blurSize, x, y, x);
+                        int blue = countUpColors(bitmapBytes, data.Width, data.Height, blurSize, x, y);
                         int green = returnCountUpGreen();
                         int red = returnCountUpRed();
                     
@@ -143,7 +144,6 @@ namespace Project_JA
                         bitmapBytes[i + 1] = (byte)green;
                         bitmapBytes[i + 2] = (byte)red;
                     }
-
                 }
             });
             Marshal.Copy(bitmapBytes, 0, ptr, bytes);
@@ -239,7 +239,7 @@ namespace Project_JA
                     {
                         int i = y * Math.Abs(data.Stride) + x * 4;
 
-                        int blue = countUpColors(bitmapBytes, data.Width, data.Height, blurSize, x, y, x);
+                        int blue = countUpColors(bitmapBytes, data.Width, data.Height, blurSize, x, y);
                         int green = returnCountUpGreen();
                         int red = returnCountUpRed();
 

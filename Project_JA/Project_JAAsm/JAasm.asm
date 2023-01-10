@@ -15,6 +15,12 @@ countUpColors proc
     ;skopiowanie data.Width
     movq mm6, rbx
 
+    ;skopiowanie y
+    mov r10, [rsp+48]
+
+    ;skopiowanie x
+    mov r11, [rsp+40]
+
     ;wyzerowanie wartoœæi kolorów
     mov rax, 0
     movq mm0, rax
